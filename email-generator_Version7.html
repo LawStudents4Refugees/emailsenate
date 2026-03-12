@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #d32f2f;
+            padding-bottom: 15px;
+        }
+
+        h1 {
+            color: #d32f2f;
+            font-size: 28px;
+        }
+
+        .intro-blurb {
+            background-color: #fff3e0;
+            border-left: 4px solid #d32f2f;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            line-height: 1.6;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .intro-blurb p {
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: 'Arial', sans-serif;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #d32f2f;
+            box-shadow: 0 0 5px rgba(211, 47, 47, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-generate {
+            background-color: #d32f2f;
+            color: white;
+        }
+
+        .btn-generate:hover {
+            background-color: #b71c1c;
+        }
+
+        .btn-clear {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-clear:hover {
+            background-color: #bdbdbd;
+        }
+
+        .email-preview {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fafafa;
+            border-left: 4px solid #d32f2f;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .email-preview.active {
+            display: block;
+        }
+
+        .email-preview h3 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .email-content {
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            min-height: 200px;
+            resize: vertical;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .preview-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .copy-button,
+        .send-button {
+            flex: 1;
+            padding: 10px;
+            background-color: #d32f2f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .copy-button:hover,
+        .send-button:hover {
+            background-color: #b71c1c;
+        }
+
+        .copy-feedback {
+            display: none;
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .copy-feedback.show {
+            display: block;
+        }
+
+        .edit-mode-toggle {
+            display: none;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .edit-mode-toggle button {
+            padding: 8px 15px;
+            font-size: 13px;
+            flex: none;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Email Generator</h1>
+        </header>
+
+        <div class="intro-blurb">
+            <p>Use this tool to quickly generate a personalized email to your senator. Simply enter your details and select your senator, then generate a template email that you can customize and send. Your voice matters—let your elected representatives know your concerns.</p>
+        </div>
+
+        <form id="emailForm">
+            <div class="form-group">
+                <label for="userName">Your Name</label>
+                <input type="text" id="userName" name="userName" placeholder="Enter your name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="userSuburb">Your Suburb</label>
+                <input type="text" id="userSuburb" name="userSuburb" placeholder="Enter your suburb" required>
+            </div>
+
+            <div class="form-group">
+                <label for="senator">Senator</label>
+                <select id="senator" name="senator" required>
+                    <option value="">Select a senator</option>
+                    <option value="Michelle Ananda-Rajah">Michelle Ananda-Rajah</option>
+                    <option value="Ralph Didier Babet">Ralph Didier Babet</option>
+                    <option value="Raffaele Ciccone">Raffaele Ciccone</option>
+                    <option value="Lisa Darmanin">Lisa Darmanin</option>
+                    <option value="Sarah Moya Henderson">Sarah Moya Henderson</option>
+                    <option value="Jane Hume">Jane Hume</option>
+                    <option value="Grace McKenzie">Grace McKenzie</option>
+                    <option value="James William Patterson">James William Patterson</option>
+                    <option value="Jana Naretha Anne Stewart">Jana Naretha Anne Stewart</option>
+                    <option value="Jess Cecille Walsh">Jess Cecille Walsh</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-generate" onclick="generateEmail()">Generate Email</button>
+                <button type="button" class="btn-clear" onclick="clearForm()">Clear</button>
+            </div>
+        </form>
+
+        <div class="email-preview" id="emailPreview">
+            <h3>Email Preview</h3>
+            <textarea class="email-content" id="emailContent" placeholder="Your email will appear here"></textarea>
+            <div class="edit-mode-toggle" id="editModeToggle">
+                <button type="button" onclick="toggleEditMode()" style="background-color: #d32f2f;">Edit Email</button>
+            </div>
+            <div class="preview-buttons">
+                <button class="copy-button" onclick="copyToClipboard()">Copy Email</button>
+                <button class="send-button" onclick="sendEmail()">Send Email</button>
+            </div>
+            <div class="copy-feedback" id="copyFeedback">Copied to clipboard!</div>
+        </div>
+    </div>
+
+    <script>
+        // Senator email mapping
+        const senatorEmails = {
+            "Michelle Ananda-Rajah": "senator.ananda-rajah@aph.gov.au",
+            "Ralph Didier Babet": "senator.babet@aph.gov.au",
+            "Raffaele Ciccone": "senator.ciccone@aph.gov.au",
+            "Lisa Darmanin": "senator.darmanin@aph.gov.au",
+            "Sarah Moya Henderson": "senator.henderson@aph.gov.au",
+            "Jane Hume": "senator.hume@aph.gov.au",
+            "Grace McKenzie": "senator.mckenzie@aph.gov.au",
+            "James William Patterson": "senator.paterson@aph.gov.au",
+            "Jana Naretha Anne Stewart": "senator.stewart@aph.gov.au",
+            "Jess Cecille Walsh": "senator.walsh@aph.gov.au"
+        };
+
+        function generateEmail() {
+            const userName = document.getElementById('userName').value;
+            const userSuburb = document.getElementById('userSuburb').value;
+            const senator = document.getElementById('senator').value;
+
+            if (!userName || !userSuburb || !senator) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const emailContent = `Dear Senator ${senator},
+
+My name is ${userName}, I am a resident of ${userSuburb}, Victoria. 
+
+I am writing to you to express my horror at the recently introduced legislation to temporarily ban the entry of classes of non-citizens into Australia. I am calling on you to oppose the Migration Amendment (2026 Measures No.1) Bill 2026.
+
+I want you to be aware that this Bill doesn't just impact people overseas, it impacts me and my community. People from these countries that this Bill will be used to target are an important part of my community, they are my colleagues, business owners, and friends. If you support the exclusion of immigrants based on nationality, you support excluding the family members of the many Middle Eastern Australians you represent. 
+
+
+Currently, Australia does not offer visas for the purposes of seeking asylum and offshore humanitarian visas are often not processed quickly enough to protect those in immediate risk of harm or death. Asylum seekers rely on temporary visas to escape to Australia where they can apply for protection. I'm proud of the safety and freedom my country can provide to so many brave people escaping war, conflict, and oppression. It is shameful that the Government is trying to limit who can seek asylum based on nationality. 
+
+In Australia, everyone should get a fair go. Banning people from coming to this country based on their nationality is plain unfair, and using this power to stop people from seeking asylum is simply un-Australian. I'm proud to be part of a free and democratic country where rights are respected, will you stand up for Australian values and oppose this Bill? 
+
+I urge you to use every power you have to resist this Bill. Please recommend against the Bill during the senate inquiry, and speak up for the rights of asylum seekers and immigrants. 
+
+Kind regards,
+
+${userName}
+${userSuburb}, VIC`;
+
+            document.getElementById('emailContent').value = emailContent;
+            document.getElementById('emailPreview').classList.add('active');
+            document.getElementById('editModeToggle').style.display = 'block';
+        }
+
+        function clearForm() {
+            document.getElementById('emailForm').reset();
+            document.getElementById('emailPreview').classList.remove('active');
+            document.getElementById('copyFeedback').classList.remove('show');
+            document.getElementById('editModeToggle').style.display = 'none';
+        }
+
+        function toggleEditMode() {
+            const emailContent = document.getElementById('emailContent');
+            emailContent.readOnly = !emailContent.readOnly;
+            const button = document.getElementById('editModeToggle').querySelector('button');
+            if (emailContent.readOnly) {
+                button.textContent = 'Edit Email';
+            } else {
+                button.textContent = 'Done Editing';
+            }
+        }
+
+        function copyToClipboard() {
+            const emailContent = document.getElementById('emailContent').value;
+            navigator.clipboard.writeText(emailContent).then(() => {
+                const feedback = document.getElementById('copyFeedback');
+                feedback.classList.add('show');
+                setTimeout(() => {
+                    feedback.classList.remove('show');
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        function sendEmail() {
+            const userName = document.getElementById('userName').value;
+            const senator = document.getElementById('senator').value;
+            const emailContent = document.getElementById('emailContent').value;
+            const senatorEmail = senatorEmails[senator];
+
+            if (!senatorEmail) {
+                alert('Senator email not found');
+                return;
+            }
+
+            // Create mailto link
+            const subject = `Message from constituent ${userName}`;
+            const body = encodeURIComponent(emailContent);
+            const mailtoLink = `mailto:${senatorEmail}?subject=${encodeURIComponent(subject)}&body=${body}`;
+
+            // Open default email client
+            window.location.href = mailtoLink;
+        }
+    </script>
+</body>
+</html>
